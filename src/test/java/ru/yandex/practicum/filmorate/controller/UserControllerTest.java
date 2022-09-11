@@ -14,7 +14,7 @@ class UserControllerTest {
     static UserController userController;
 
     @BeforeAll
-    static void setUp() throws ValidationException {
+    static void setUp() {
         userController = new UserController();
 
         User user1 = User.builder()
@@ -159,7 +159,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUserWithEmptyName() throws ValidationException {
+    void addUserWithEmptyName() {
         User user4 = User.builder()
                 .id(0)
                 .email("user4@yandex.ru")
@@ -173,7 +173,7 @@ class UserControllerTest {
     }
 
     @Test
-    void addUserWithNullName() throws ValidationException {
+    void addUserWithNullName() {
         User user4 = User.builder()
                 .id(0)
                 .email("user4@yandex.ru")
@@ -199,12 +199,12 @@ class UserControllerTest {
         try {
             userController.create(user4);
         } catch (ValidationException thrown) {
-            assertEquals("Дата рождения не может быть в будущем.", thrown.getMessage());
+            assertEquals("Дата рождения не может быть в будущем", thrown.getMessage());
         }
     }
 
     @Test
-    void updateUser() throws ValidationException {
+    void updateUser() {
         User userForUpdate = User.builder()
                 .id(3)
                 .email("user4@yandex.ru")
@@ -245,7 +245,7 @@ class UserControllerTest {
         try {
             userController.put(userForUpdate);
         } catch (ValidationException thrown) {
-            assertEquals("Пользователя с таким Id = 4 нет.", thrown.getMessage());
+            assertEquals("Пользователя с таким Id = 4 нет", thrown.getMessage());
         }
 
     }

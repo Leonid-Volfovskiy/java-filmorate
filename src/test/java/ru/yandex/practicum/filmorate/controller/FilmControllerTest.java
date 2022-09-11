@@ -14,7 +14,7 @@ class FilmControllerTest {
     static FilmController filmController;
 
     @BeforeAll
-    static void setUp() throws ValidationException {
+    static void setUp(){
         filmController = new FilmController();
 
         Film film1 = Film.builder()
@@ -22,7 +22,7 @@ class FilmControllerTest {
                 .name("Gone in Sixty Seconds")
                 .description("Классное кино про угон авто")
                 .releaseDate(LocalDate.of(2000, 6, 15))
-                .duration(Duration.ofMinutes(118))
+                .duration(118)
                 .build();
 
         Film film2 = Film.builder()
@@ -30,7 +30,7 @@ class FilmControllerTest {
                 .name("The Avengers")
                 .description("Команда супергероев дает отпор скандинавскому богу Локи.")
                 .releaseDate(LocalDate.of(2012, 5, 3))
-                .duration(Duration.ofMinutes(137))
+                .duration(137)
                 .build();
 
         Film film3 = Film.builder()
@@ -38,7 +38,7 @@ class FilmControllerTest {
                 .name("Harry Potter and the Sorcerer's Stone")
                 .description("Первая часть большой франшизы о маленьком волшебнике")
                 .releaseDate(LocalDate.of(2001, 11, 4))
-                .duration(Duration.ofMinutes(152))
+                .duration(152)
                 .build();
 
         filmController.create(film1);
@@ -63,12 +63,12 @@ class FilmControllerTest {
                 .name(" ")
                 .description("Гарри Поттер переходит на второй курс Школы чародейства и волшебства Хогвартс.")
                 .releaseDate(LocalDate.of(2002, 11, 10))
-                .duration(Duration.ofMinutes(161))
+                .duration(161)
                 .build();
         try {
             filmController.create(film4);
         } catch (ValidationException thrown) {
-            assertEquals("Название не может быть пустым.", thrown.getMessage());
+            assertEquals("Название не может быть пустым", thrown.getMessage());
         }
     }
 
@@ -79,12 +79,12 @@ class FilmControllerTest {
                 .name(null)
                 .description("Гарри Поттер переходит на второй курс Школы чародейства и волшебства Хогвартс.")
                 .releaseDate(LocalDate.of(2002, 11, 10))
-                .duration(Duration.ofMinutes(161))
+                .duration(161)
                 .build();
         try {
             filmController.create(film4);
         } catch (ValidationException thrown) {
-            assertEquals("Название не может быть пустым.", thrown.getMessage());
+            assertEquals("Название не может быть пустым", thrown.getMessage());
         }
     }
 
@@ -100,12 +100,12 @@ class FilmControllerTest {
                         "Вскоре Гарри и его друзья узнают о существовании Тайной Комнаты и сталкиваются " +
                         "с новыми приключениями, пытаясь победить темные силы.")
                 .releaseDate(LocalDate.of(2002, 11, 10))
-                .duration(Duration.ofMinutes(161))
+                .duration(161)
                 .build();
         try {
             filmController.create(film4);
         } catch (ValidationException thrown) {
-            assertEquals("Максимальная длина описания — 200 символов.", thrown.getMessage());
+            assertEquals("Максимальная длина описания — 200 символов", thrown.getMessage());
         }
     }
 
@@ -115,13 +115,13 @@ class FilmControllerTest {
                 .id(0)
                 .name("Harry Potter and the Chamber of Secrets")
                 .description("Гарри Поттер переходит на второй курс Школы чародейства и волшебства Хогвартс.")
-                .releaseDate(LocalDate.of(1985, 12, 27))
-                .duration(Duration.ofMinutes(161))
+                .releaseDate(LocalDate.of(1895, 12, 27))
+                .duration(161)
                 .build();
         try {
             filmController.create(film4);
         } catch (ValidationException thrown) {
-            assertEquals("Дата релиза — не раньше 28 декабря 1895 года.", thrown.getMessage());
+            assertEquals("Дата релиза — не раньше 28 декабря 1895 года", thrown.getMessage());
         }
     }
 
@@ -132,24 +132,24 @@ class FilmControllerTest {
                 .name("Harry Potter and the Chamber of Secrets")
                 .description("Гарри Поттер переходит на второй курс Школы чародейства и волшебства Хогвартс.")
                 .releaseDate(LocalDate.of(2002, 11, 10))
-                .duration(Duration.ofMinutes(-161))
+                .duration(-161)
                 .build();
         try {
             filmController.create(film4);
         } catch (ValidationException thrown) {
-            assertEquals("Продолжительность фильма должна быть положительной.", thrown.getMessage());
+            assertEquals("Продолжительность фильма должна быть положительной", thrown.getMessage());
         }
     }
 
     @Test
-    void updateFilm() throws ValidationException {
+    void updateFilm(){
 
         Film filmForUpdate = Film.builder()
                 .id(3)
                 .name("Harry Potter and the Sorcerer's Stone - 1 part")
                 .description("Первая часть большой франшизы о маленьком волшебнике Гарри")
                 .releaseDate(LocalDate.of(2001, 11, 3))
-                .duration(Duration.ofMinutes(150))
+                .duration(150)
                 .build();
 
         filmController.put(filmForUpdate);
@@ -176,13 +176,13 @@ class FilmControllerTest {
                 .name("Harry Potter and the Sorcerer's Stone - 1 part")
                 .description("Первая часть большой франшизы о маленьком волшебнике Гарри")
                 .releaseDate(LocalDate.of(2001, 11, 3))
-                .duration(Duration.ofMinutes(150))
+                .duration(150)
                 .build();
 
         try {
             filmController.put(filmForUpdate);
         } catch (ValidationException thrown) {
-            assertEquals("Фильма с таким Id = 4 нет.", thrown.getMessage());
+            assertEquals("Фильма с таким Id = 4 нет", thrown.getMessage());
         }
 
     }
