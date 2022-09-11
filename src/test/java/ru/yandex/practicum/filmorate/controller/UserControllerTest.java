@@ -22,7 +22,7 @@ class UserControllerTest {
                 .email("user1@yandex.ru")
                 .login("BadBoy")
                 .name("Alex")
-                .birthday(LocalDate.of(2000, 6, 15))
+                .birthday(LocalDate.of(2000, 6, 14))
                 .build();
 
         User user2 = User.builder()
