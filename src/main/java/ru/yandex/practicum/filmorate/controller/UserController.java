@@ -15,8 +15,6 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     private int userId = 0;
-    private static final String AT = "@";
-    private static final LocalDate BIRTH_LIMIT = LocalDate.now();
     private final Map<Integer, User> users = new HashMap<>();
 
     protected void clearUsers() {
@@ -58,11 +56,7 @@ public class UserController {
     }
 
     private boolean userValidation(User user){
-        if (user == null) {
-            log.warn("Пользователь передал пустой объект вместо информации о Пользователе");
-            throw new ValidationException("Пользователь не может быть пустым");
-        }
-        if(user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains(AT)) {
+        if(user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
             log.warn("Пользователь ввёл пустой или некорректный email");
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
@@ -74,7 +68,7 @@ public class UserController {
             log.info("Пользователь ввёл пустое имя");
             user.setName(user.getLogin());
         }
-        if (user.getBirthday() == null || user.getBirthday().isAfter(BIRTH_LIMIT)) {
+        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             log.warn("Пользователь ввёл некорректную дату рождения");
             throw new ValidationException("Дата рождения не может быть в будущем");
         }

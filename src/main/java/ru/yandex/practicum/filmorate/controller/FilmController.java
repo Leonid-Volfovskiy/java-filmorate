@@ -60,10 +60,6 @@ public class FilmController {
 
 
     private boolean filmValidation(Film film) {
-        if (film == null) {
-            log.warn("Пользователь передал пустой объект вместо информации о фильме");
-            throw new ValidationException("Фильм не может быть пустым");
-        }
         if(film.getName() == null || film.getName().isBlank()) {
             log.warn("Пользователь ввёл пустое название фильма");
             throw new ValidationException("Название не может быть пустым");
