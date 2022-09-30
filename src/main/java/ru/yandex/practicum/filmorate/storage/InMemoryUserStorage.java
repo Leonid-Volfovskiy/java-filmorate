@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -57,11 +58,16 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User getUserById(int id) {
-        if (users.containsKey(id)) {
-            return users.get(id);
+        if (id > 0) {
+            if (users.containsKey(id)) {
+                return users.get(id);
+            } else {
+                log.warn("Пользователь ввёл не существующий ID пользователя");
+                throw new NotFoundException("Пользователь c таким ID = " + id + " не найден!");
+            }
         } else {
-            log.warn("Пользователь ввёл не существующий ID пользователя");
-            throw new NotFoundException("Пользователь c таким ID = " + id + " не найден!");
+            log.warn("Пользователь ввёл отрицательный ID");
+            throw new ValidationException("Пользователя c таким ID = " + id + " не может быть!");
         }
     }
 
@@ -72,7 +78,7 @@ public class InMemoryUserStorage implements UserStorage{
         }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             log.warn("Пользователь ввёл пустой или некорректный login");
-            throw new NotFoundException("Логин не может быть пустым и содержать пробелы");
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
         if (user.getName() == null || user.getName().isBlank()) {
             log.info("Пользователь ввёл пустое имя");
@@ -80,7 +86,7 @@ public class InMemoryUserStorage implements UserStorage{
         }
         if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
             log.warn("Пользователь ввёл некорректную дату рождения");
-            throw new NotFoundException("Дата рождения не может быть в будущем");
+            throw new ValidationException("Дата рождения не может быть в будущем");
         }
         return true;
     }

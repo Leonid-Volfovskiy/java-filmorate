@@ -46,7 +46,7 @@ public class InMemoryFilmStorage implements FilmStorage{
             log.debug("Фильм обновлен: {}", updatedFilm);
         } else {
             log.warn("Запрос к эндпоинту PUT не обработан. Пользователь пытался обновить несуществующего User-a");
-            throw new ValidationException("Фильма с таким Id = " + film.getId() + " нет");
+            throw new NotFoundException("Фильма с таким Id = " + film.getId() + " нет");
         }
         return updatedFilm;
     }
@@ -64,11 +64,16 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film getFilmById(int id) {
-        if (films.containsKey(filmID)) {
-            return films.get(filmID);
+        if (id > 0) {
+            if (films.containsKey(filmID)) {
+                return films.get(filmID);
+            } else {
+                log.warn("Пользователь ввёл не существующий ID фильма");
+                throw new NotFoundException("Фильм c таким ID = " + id + " не найден!");
+            }
         } else {
-            log.warn("Пользователь ввёл не существующий ID фильма");
-            throw new NotFoundException("Фильм c таким ID = " + id + " не найден!");
+            log.warn("Пользователь ввёл отрицательный ID фильма");
+            throw new ValidationException("Фильма c таким ID = " + id + " не может быть!");
         }
     }
 
