@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
 import java.util.List;
@@ -32,12 +33,12 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         return filmService.create(film);
     }
 
     @PutMapping
-    public Film put(@RequestBody Film film) {
+    public Film put(@Valid @RequestBody Film film) {
         return filmService.update(film);
     }
 
@@ -61,7 +62,8 @@ public class FilmController {
     //GET /films/popular?count={count}
     @GetMapping("/popular")
     public List<Film> getPopularFilms(
-            @Positive @RequestParam(name = "count", defaultValue = "10", required = false) Integer count) {
+            @Positive
+            @RequestParam(name = "count", defaultValue = "10", required = false) Integer count) {
         return filmService.getPopularFilms(count);
     }
 

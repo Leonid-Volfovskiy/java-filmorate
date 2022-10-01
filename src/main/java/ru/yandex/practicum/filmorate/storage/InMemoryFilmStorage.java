@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.Constants.MAX_DESCRIPTION_LENGTH;
 import static ru.yandex.practicum.filmorate.Constants.OLD_RELEASE_DATE;
 
 @Component
@@ -27,11 +26,14 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film create(Film film) {
-        filmValidation(film);
-        film.setId(newFilmId());
-        films.put(film.getId(), film);
-        log.debug("Добавлен новый фильм: {}", film);
-        return film;
+        Film newFilm = null;
+        if (filmValidation(film)) {
+            film.setId(newFilmId());
+            films.put(film.getId(), film);
+            newFilm = films.get(film.getId());
+            log.debug("Добавлен новый фильм: {}", film);
+        }
+        return newFilm;
     }
 
     @Override
@@ -64,35 +66,18 @@ public class InMemoryFilmStorage implements FilmStorage{
 
     @Override
     public Film getFilmById(int id) {
-        if (id > 0) {
-            if (films.containsKey(filmID)) {
-                return films.get(filmID);
-            } else {
-                log.warn("Пользователь ввёл не существующий ID фильма");
-                throw new NotFoundException("Фильм c таким ID = " + id + " не найден!");
-            }
+        if (films.containsKey(filmID)) {
+            return films.get(filmID);
         } else {
-            log.warn("Пользователь ввёл отрицательный ID фильма");
-            throw new ValidationException("Фильма c таким ID = " + id + " не может быть!");
+            log.warn("Пользователь ввёл не существующий ID фильма");
+            throw new NotFoundException("Фильм c таким ID = " + id + " не найден!");
         }
     }
 
     private boolean filmValidation(Film film) {
-        if(film.getName() == null || film.getName().isBlank()) {
-            log.warn("Пользователь ввёл пустое название фильма");
-            throw new ValidationException("Название не может быть пустым");
-        }
-        if (film.getDescription() == null || film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
-            log.warn("Пользователь ввёл слишком длинное описание фильма");
-            throw new ValidationException("Максимальная длина описания — 200 символов");
-        }
-        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(OLD_RELEASE_DATE)){
+        if (film.getReleaseDate().isBefore(OLD_RELEASE_DATE)){
             log.warn("Пользователь ввёл слишком старый фильм");
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        }
-        if (film.getDuration() <= 0) {
-            log.warn("Пользователь ввёл фильм с отрицательной продолжительностью");
-            throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
         return true;
     }

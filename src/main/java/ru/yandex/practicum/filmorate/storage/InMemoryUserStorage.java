@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,23 +69,10 @@ public class InMemoryUserStorage implements UserStorage{
             throw new ValidationException("Пользователя c таким ID = " + id + " не может быть!");
         }
     }
-
     private boolean userValidation(User user){
-        if(user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            log.warn("Пользователь ввёл пустой или некорректный email");
-            throw new NotFoundException("Электронная почта не может быть пустой и должна содержать символ @");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            log.warn("Пользователь ввёл пустой или некорректный login");
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
         if (user.getName() == null || user.getName().isBlank()) {
             log.info("Пользователь ввёл пустое имя");
             user.setName(user.getLogin());
-        }
-        if (user.getBirthday() == null || user.getBirthday().isAfter(LocalDate.now())) {
-            log.warn("Пользователь ввёл некорректную дату рождения");
-            throw new ValidationException("Дата рождения не может быть в будущем");
         }
         return true;
     }

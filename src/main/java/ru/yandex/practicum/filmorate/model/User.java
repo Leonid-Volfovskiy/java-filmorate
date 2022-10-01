@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -12,9 +15,13 @@ import java.util.Set;
 public class User {
     private int id;
     @Email
+    @NotNull
     private String email;
     private String name;
+    @NotBlank
     private String login;
+    @Past
+    @NotNull
     private LocalDate birthday;
     private Set<Integer> friends;
 }
