@@ -43,19 +43,19 @@ public class FilmController {
     }
 
     @GetMapping("/{filmId}")
-    public Film getFilmById(@Positive @PathVariable("filmId") int filmId) {
+    public Film getFilmById(@PathVariable("filmId") int filmId) {
         return filmService.getFilmById(filmId);
     }
 
     //PUT /films/{id}/like/{userId}
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@Positive @PathVariable("id") int id, @Positive @PathVariable("userId") int userId) {
+    public Film addLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         return filmService.addLike(id, userId);
     }
 
     //DELETE /films/{id}/like/{userId}
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@Positive @PathVariable("id") int id, @Positive @PathVariable("userId") int userId) {
+    public Film deleteLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         return filmService.deleteLike(id, userId);
     }
 
@@ -68,7 +68,7 @@ public class FilmController {
     }
 
     @ExceptionHandler
-    public ResponseEntity< String > exc(ConstraintViolationException ex) {
+    public ResponseEntity<String> exc(ConstraintViolationException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

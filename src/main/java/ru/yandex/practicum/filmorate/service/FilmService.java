@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -13,16 +13,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.filmorate.Constants.OLD_RELEASE_DATE;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserService userService;
 
     public Film create (Film film) {
+        filmValidation(film);
         return filmStorage.create(film);
     }
     public Film update (Film film) {
+        filmValidation(film);
         return filmStorage.update(film);
     }
 
@@ -40,32 +45,35 @@ public class FilmService {
     public Film addLike (int filmId, int userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userService.getUserById(userId);
-
-        if (film != null && user != null) {
-            film.getLikes().add(userId);
-        } else {
-            throw new NotFoundException("Запрашиваемый фильм не найден");
-        }
+        film.getLikes().add(userId);
+        log.info("Пользователь " + user.getName() + " поставил лайк фильму " + film.getName());
         return film;
     }
 
     public Film deleteLike (int filmId, int userId) {
         Film film = filmStorage.getFilmById(filmId);
         User user = userService.getUserById(userId);
-
-        if (film != null && user != null) {
-            film.getLikes().remove(userId);
-        } else {
-            throw new NotFoundException("Запрашиваемый фильм не найден");
-        }
+        film.getLikes().remove(userId);
+        log.info("Пользователь " + user.getName() + " удалил лайк у фильма " + film.getName());
         return film;
     }
 
     public List<Film> getPopularFilms (int count) {
         return filmStorage.findAll().stream()
-                .sorted((f1, f2) -> f1.getLikes().size() - f2.getLikes().size())
+                .sorted(this::compare)
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    private int compare(Film f0, Film f1) {
+        return -1 * Integer.compare(f0.getLikes().size(), f1.getLikes().size());
+    }
+
+    private void filmValidation(Film film) {
+        if (film.getReleaseDate().isBefore(OLD_RELEASE_DATE)){
+            log.warn("Пользователь ввёл слишком старый фильм");
+            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
+        }
     }
 
 }

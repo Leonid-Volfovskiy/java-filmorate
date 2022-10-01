@@ -51,5 +51,4 @@ public class ErrorHandler {
         return new ErrorResponse("Неизвестная ошибка.");
     }
 
-
 }

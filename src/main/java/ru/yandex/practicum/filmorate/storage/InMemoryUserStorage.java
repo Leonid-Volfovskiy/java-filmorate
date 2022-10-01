@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User create(User user) {
-        userValidation(user);
         user.setId(newUserId());
         users.put(user.getId(), user);
         log.debug("Добавлен новый пользователь: {}", user);
@@ -31,18 +29,12 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User update(User user) {
-        User updatedUser = null;
-        if (userValidation(user) && users.containsKey(user.getId())) {
-            updatedUser = users.get(user.getId());
-            updatedUser.setEmail(user.getEmail());
-            updatedUser.setLogin(user.getLogin());
-            updatedUser.setName(user.getName());
-            updatedUser.setBirthday(user.getBirthday());
-            log.debug("Пользователь обновлен: {}", updatedUser);
-        } else {
-            throw new NotFoundException("Пользователя с таким Id = " + user.getId() + " нет");
+        if (!users.containsKey(user.getId())) {
+            throw new NotFoundException("Пользователь не найден.");
         }
-        return updatedUser;
+        users.put(user.getId(), user);
+        log.info("Данные пользователя с ID " + user.getId() + " обновлены.");
+        return user;
     }
 
     @Override
@@ -57,13 +49,11 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User getUserById(int id) {
-        return users.get(id);
-    }
-    private boolean userValidation(User user){
-        if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Пользователь ввёл пустое имя");
-            user.setName(user.getLogin());
+        if (users.containsKey(id)) {
+            return users.get(id);
+        } else {
+            throw new NotFoundException("Пользователь не найден!");
         }
-        return true;
     }
+
 }
