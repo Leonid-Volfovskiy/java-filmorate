@@ -3,17 +3,15 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.yandex.practicum.filmorate.Constants.OLD_RELEASE_DATE;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +21,14 @@ public class FilmService {
     private final UserService userService;
 
     public Film create (Film film) {
-        filmValidation(film);
         return filmStorage.create(film);
     }
     public Film update (Film film) {
-        filmValidation(film);
         return filmStorage.update(film);
     }
 
-    public Collection<Film> findAll() {
-        return filmStorage.findAll();
+    public List<Film> findAll() {
+        return new ArrayList<>(filmStorage.findAll());
     }
     public void deleteAllFilms () {
         filmStorage.deleteAllFilms();
@@ -69,11 +65,5 @@ public class FilmService {
         return -1 * Integer.compare(f0.getLikes().size(), f1.getLikes().size());
     }
 
-    private void filmValidation(Film film) {
-        if (film.getReleaseDate().isBefore(OLD_RELEASE_DATE)){
-            log.warn("Пользователь ввёл слишком старый фильм");
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
-        }
-    }
 
 }

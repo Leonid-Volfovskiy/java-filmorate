@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -22,17 +21,19 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> findAll() {
+    public List<User> findAll() {
         return userService.findAll();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user){
+        userValidation(user);
         return userService.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User user){
+        userValidation(user);
         return userService.update(user);
     }
 
@@ -55,7 +56,7 @@ public class UserController {
     @GetMapping("/{id}/friends")
     public List<User> listOfFriendsByID(@PathVariable("id") int id) {
         log.info("Запрошен список друзей Пользователя id = " + id); // вынести в контроллер
-        return userService.getlistOfFriendsByID(id);
+        return userService.getListOfFriendsByID(id);
     }
     //GET /users/{id}/friends/common/{otherId}
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -63,6 +64,13 @@ public class UserController {
                                            @PathVariable("otherId") int otherId) {
         log.info("Запрошен список общих друзей для Пользователей: id = " + id + " и id = " + otherId);
         return userService.listOfCommonFriends(id, otherId);
+    }
+
+    private void userValidation(User user){
+        if (user.getName() == null || user.getName().isBlank()) {
+            log.info("Пользователь ввёл пустое имя");
+            user.setName(user.getLogin());
+        }
     }
 
 }
