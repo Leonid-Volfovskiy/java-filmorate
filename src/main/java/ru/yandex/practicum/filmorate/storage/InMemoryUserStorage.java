@@ -57,17 +57,7 @@ public class InMemoryUserStorage implements UserStorage{
 
     @Override
     public User getUserById(int id) {
-        if (id > 0) {
-            if (users.containsKey(id)) {
-                return users.get(id);
-            } else {
-                log.warn("Пользователь ввёл не существующий ID пользователя");
-                throw new NotFoundException("Пользователь c таким ID = " + id + " не найден!");
-            }
-        } else {
-            log.warn("Пользователь ввёл отрицательный ID");
-            throw new ValidationException("Пользователя c таким ID = " + id + " не может быть!");
-        }
+        return users.get(id);
     }
     private boolean userValidation(User user){
         if (user.getName() == null || user.getName().isBlank()) {

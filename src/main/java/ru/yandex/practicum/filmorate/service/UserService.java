@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -35,22 +36,35 @@ public class UserService {
     public User addFriend (int id, int friendId) {
         User user = getUserById(id);
         User friend = getUserById(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
+        if (user != null && friend != null) {
+            user.getFriends().add(friendId);
+            friend.getFriends().add(id);
+            log.info("Пользователь " + user.getName() + " добавлен в список друзей "
+                    + friend.getName());
+        } else if (user == null) {
+            throw new NotFoundException("Пользователя с таким Id = " + user.getId() + " нет");
+        } else {
+            throw new NotFoundException("Пользователя с таким Id = " + friend.getId() + " нет");
+        }
 
-        log.info("Пользователь " + user.getName() + " добавлен в список друзей "
-                + friend.getName());
         return user;
     }
 
     public User deleteFriend (int id, int friendId) {
         User user = getUserById(id);
         User friend = getUserById(friendId);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(id);
 
-        log.info("Пользователь " + user.getName() + " удален из списка друзей "
-                + friend.getName());
+        if (user != null && friend != null) {
+            user.getFriends().remove(friendId);
+            friend.getFriends().remove(id);
+            log.info("Пользователь " + user.getName() + " удален из списка друзей "
+                    + friend.getName());
+        } else if (user == null) {
+            throw new NotFoundException("Пользователя с таким Id = " + user.getId() + " нет");
+        } else {
+            throw new NotFoundException("Пользователя с таким Id = " + friend.getId() + " нет");
+        }
+
         return user;
     }
 

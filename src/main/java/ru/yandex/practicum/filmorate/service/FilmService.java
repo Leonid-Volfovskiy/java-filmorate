@@ -38,16 +38,10 @@ public class FilmService {
     }
 
     public Film addLike (int filmId, int userId) {
-        Film film = null;
-        User user = null;
+        Film film = filmStorage.getFilmById(filmId);
+        User user = userService.getUserById(userId);
 
-        if (filmId > 0 && userId > 0) {
-            film = filmStorage.getFilmById(filmId);
-            user = userService.getUserById(userId);
-        } else {
-            throw new ValidationException("Некорректное значение id переданного Пользователем");
-        }
-        if (film != null) {
+        if (film != null && user != null) {
             film.getLikes().add(userId);
         } else {
             throw new NotFoundException("Запрашиваемый фильм не найден");
@@ -56,17 +50,10 @@ public class FilmService {
     }
 
     public Film deleteLike (int filmId, int userId) {
-        Film film = null;
-        User user = null;
+        Film film = filmStorage.getFilmById(filmId);
+        User user = userService.getUserById(userId);
 
-        if (filmId > 0 && userId > 0) {
-            film = filmStorage.getFilmById(filmId);
-            user = userService.getUserById(userId);
-        } else {
-            throw new ValidationException("Некорректное значение id переданного Пользователем");
-        }
-
-        if (film != null) {
+        if (film != null && user != null) {
             film.getLikes().remove(userId);
         } else {
             throw new NotFoundException("Запрашиваемый фильм не найден");
@@ -75,10 +62,6 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms (int count) {
-        if (count < 0) {
-            throw new ValidationException("Некорректное количество фильмов = " + count);
-        }
-
         return filmStorage.findAll().stream()
                 .sorted((f1, f2) -> f1.getLikes().size() - f2.getLikes().size())
                 .limit(count)
