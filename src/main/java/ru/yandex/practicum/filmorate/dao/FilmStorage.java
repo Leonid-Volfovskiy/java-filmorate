@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.dao;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface FilmStorage {
 
-    Film create (Film film);
-    Film update (Film film);
+    Film createFilm(Film film);
+    Film updateFilm(Film film);
     void deleteAllFilms ();
-    List<Film> findAll();
+    List<Film> findAllFilms();
     Film getFilmById(int id);
 
 }

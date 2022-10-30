@@ -13,9 +13,9 @@ public class User {
     @Email
     @NotNull
     private String email;
-    private String name;
     @NotBlank
     private String login;
+    private String name;
     @PastOrPresent
     @NotNull
     private LocalDate birthday;
@@ -28,6 +28,13 @@ public class User {
         this.login = login;
         this.name = name;
         this.birthday = birthdate;
+    }
+
+    public User(String email, String login, String name, LocalDate birthday) {
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
     }
 }
 

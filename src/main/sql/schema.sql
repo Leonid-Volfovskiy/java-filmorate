@@ -1,0 +1,45 @@
+create table if not exists USERS (
+    USER_ID INTEGER not null primary key unique,
+    EMAIL CHARACTER VARYING(60) not null,
+    LOGIN CHARACTER VARYING(60) not null,
+    NAME CHARACTER VARYING(60) not null,
+    BIRTHDAY DATE not null
+);
+
+create table if not exists MPA (
+    RAITING_ID INTEGER not null primary key unique,
+    MPA CHARACTER VARYING(30) not null
+);    
+
+create table if not exists FILMS (
+    FILM_ID INTEGER not null primary key unique,
+    NAME CHARACTER VARYING(60) not null,
+    DESCRIPTION CHARACTER VARYING(200) not null,
+    RELEASE_DATE DATE not null,
+    DURATION INTEGER not null,
+    RAITING_ID INTEGER REFERENCES FILMORATE.PUBLIC.MPA (RAITING_ID) ON DELETE SET NULL,
+    RATE INTEGER
+);
+
+create table if not exists LIKES (
+    FILM_ID INT REFERENCES films(FILM_ID) ON DELETE CASCADE,
+    USER_ID INT REFERENCES users(USER_ID) ON DELETE CASCADE,
+    PRIMARY KEY (FILM_ID, USER_ID)
+);
+
+create table if not exists GENRES (
+    GENRE_ID INT UNIQUE NOT NULL,
+    GENRE_NAME VARCHAR(60) NOT NULL,
+    PRIMARY KEY (GENRE_ID)
+);
+
+create table if not exists FILMS_GENRES (
+    GENRE_ID INT REFERENCES GENRES(GENRE_ID) ON DELETE CASCADE,
+    FILM_ID INT REFERENCES FILMS(FILM_ID) ON DELETE CASCADE,
+    PRIMARY KEY (FILM_ID, GENRE_ID)
+);
+
+create table if not exists FRIENDS (
+    USER_ID INT REFERENCES USERS(USER_ID) ON DELETE CASCADE,
+    FRIEND_ID INT REFERENCES USERS(user_id) ON DELETE CASCADE
+);
