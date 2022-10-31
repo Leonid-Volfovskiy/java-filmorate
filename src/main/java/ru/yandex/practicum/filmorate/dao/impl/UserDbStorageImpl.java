@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
@@ -10,8 +9,13 @@ import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.Collections;
 
 @Component
 @AllArgsConstructor
@@ -34,10 +38,11 @@ public class UserDbStorageImpl implements UserStorage {
         values.put("EMAIL", user.getEmail());
         values.put("LOGIN", user.getLogin());
         values.put("NAME", user.getName());
-        values.put("BIRTHDAY", user.getBirthday());
+        values.put("BIRTHDAY", Date.valueOf(user.getBirthday()));
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("USERS")
                 .usingGeneratedKeyColumns("USER_ID");
+
         user.setId(simpleJdbcInsert.executeAndReturnKey(values).intValue());
         return user;
     }

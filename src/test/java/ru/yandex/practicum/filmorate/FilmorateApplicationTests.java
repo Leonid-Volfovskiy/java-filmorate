@@ -22,10 +22,10 @@ class FilmorateApplicationTests {
 
 	@Test
 	public void testFindUserById() {
-		User testUser = new User("daniil@mail.ru", "Daniil88", "Daniil",
-				LocalDate.of(1988, 8, 14));
+		User testUser = new User("leo@mail.ru", "Leo99", "Leo",
+				LocalDate.of(1992, 6, 27));
 
-		userStorage.createUser(testUser);
+		//userStorage.createUser(testUser);
 
 		/*Optional<User> userOptional = Optional.ofNullable(userDbStorageImpl.getUserById(1));
 

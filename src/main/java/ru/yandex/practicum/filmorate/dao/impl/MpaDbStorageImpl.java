@@ -19,16 +19,16 @@ public class MpaDbStorageImpl implements MpaStorage {
     @Override
     public Mpa getById(int id) {
         String qs = "SELECT * FROM MPA WHERE RAITING_ID = ?";
-        return jdbcTemplate.queryForObject(qs, this::makeMpa, id);
+        return jdbcTemplate.queryForObject(qs, this::prepareMpaFromBd, id);
     }
 
     @Override
     public List<Mpa> getAllMpas() {
         String qs = "SELECT * FROM MPA";
-        return jdbcTemplate.query(qs, this::makeMpa);
+        return jdbcTemplate.query(qs, this::prepareMpaFromBd);
     }
 
-    private Mpa makeMpa(ResultSet rs, int rowNum) throws SQLException {
+    private Mpa prepareMpaFromBd(ResultSet rs, int rowNum) throws SQLException {
         int mpaId = rs.getInt("RAITING_ID");
         String mpaName = rs.getString("MPA");
         return new Mpa(mpaId, mpaName);

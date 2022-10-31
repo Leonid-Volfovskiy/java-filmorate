@@ -21,13 +21,13 @@ public class GenresDbStorageImpl implements GenresStorage {
     @Override
     public Genre getById(int id) {
         String qs = "SELECT * FROM GENRES WHERE GENRE_ID = ?";
-        return jdbcTemplate.queryForObject(qs, this::makeGenre, id);
+        return jdbcTemplate.queryForObject(qs, this::prepareGenreFromBd, id);
     }
 
     @Override
     public List<Genre> getAllGenres() {
         String qs = "SELECT * FROM GENRES";
-        return jdbcTemplate.query(qs, this::makeGenre);
+        return jdbcTemplate.query(qs, this::prepareGenreFromBd);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class GenresDbStorageImpl implements GenresStorage {
         String qs = "SELECT * FROM GENRES g " +
                 "INNER JOIN FILM_GENRES fg on g.GENRE_ID = fg.GENRE_ID" +
                 "WHERE FILM_ID = ?";
-        return jdbcTemplate.query(qs, this::makeGenre, filmId);
+        return jdbcTemplate.query(qs, this::prepareGenreFromBd, filmId);
     }
 
     public void filmGenreUpdate(Integer filmId, List<Genre> genreList) {
@@ -58,7 +58,7 @@ public class GenresDbStorageImpl implements GenresStorage {
         jdbcTemplate.update("DELETE FROM FILM_GENRES WHERE FILM_ID = ?", filmId);
     }
 
-    private Genre makeGenre(ResultSet rs, int rowNum) throws SQLException {
+    private Genre prepareGenreFromBd(ResultSet rs, int rowNum) throws SQLException {
         int genreId = rs.getInt("GENRE_ID");
         String genreName = rs.getString("GENRE_NAME");
         return new Genre(genreId, genreName);
