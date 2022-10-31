@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.impl.FriendsDbStorageImpl;
-import ru.yandex.practicum.filmorate.dao.impl.UserDbStorageImpl;
+import ru.yandex.practicum.filmorate.dao.FriendsStorage;
+import ru.yandex.practicum.filmorate.dao.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -16,38 +16,38 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final UserDbStorageImpl userDbStorageImpl;
-    private final FriendsDbStorageImpl friendsDbStorageImpl;
+    private final UserStorage userStorage;
+    private final FriendsStorage friendsStorage;
 
     public User create (User user) {
-        return userDbStorageImpl.createUser(user);
+        return userStorage.createUser(user);
     }
     public User update (User user) {
-        return userDbStorageImpl.updateUser(user);
+        return userStorage.updateUser(user);
     }
     public void deleteAllUsers () {
-        userDbStorageImpl.deleteAllUsers();
+        userStorage.deleteAllUsers();
     }
     public List<User> findAll() {
-        return new ArrayList<>(userDbStorageImpl.findAllUsers());
+        return new ArrayList<>(userStorage.findAllUsers());
     }
     public User getUserById(int userId) {
-        return userDbStorageImpl.getUserById(userId);
+        return userStorage.getUserById(userId);
     }
 
     public void addFriend (int userId, int friendId) {
         if (userId < 0 || friendId < 0) {
             throw new NotFoundException("Пользователь не может быть добавлен.");
         }
-        friendsDbStorageImpl.saveFriend(userId, friendId);
+        friendsStorage.saveFriend(userId, friendId);
     }
 
     public void deleteFriend (int userId, int friendId) {
-        friendsDbStorageImpl.deleteFriend(userId, friendId);
+        friendsStorage.deleteFriend(userId, friendId);
     }
 
     public List<User> getListOfFriendsByID(int userId) {
-        return userDbStorageImpl.getFriends(userId);
+        return userStorage.getFriends(userId);
     }
 
 
@@ -58,7 +58,7 @@ public class UserService {
         return user.getFriends()
                 .stream()
                 .filter(f -> friend.getFriends().contains(f))
-                .map(userDbStorageImpl::getUserById)
+                .map(userStorage::getUserById)
                 .collect(Collectors.toList());
     }
 

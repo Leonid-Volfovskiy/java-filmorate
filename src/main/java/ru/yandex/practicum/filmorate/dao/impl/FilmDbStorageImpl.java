@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -44,7 +43,7 @@ public class FilmDbStorageImpl implements FilmStorage {
         values.put("RAITING_ID", film.getMpa().getId());
         values.put("RATE", film.getRate());
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("films")
+                .withTableName("FILMS")
                 .usingGeneratedKeyColumns("FILM_ID");
         film.setId(simpleJdbcInsert.executeAndReturnKey(values).intValue());
         return film;
