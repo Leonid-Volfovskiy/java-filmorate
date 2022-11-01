@@ -26,8 +26,8 @@ public class LikesDbDaoImpl implements LikesDao {
     }
 
     private void updateRate(int filmId) {
-        jdbcTemplate.update("UPDATE films f " +
-                "SET rate = (" +
+        jdbcTemplate.update("UPDATE FILMS f " +
+                "SET RATE = (" +
                 "SELECT COUNT(l.user_id) " +
                 "FROM likes l " +
                 "WHERE l.film_id = f.film_id" +

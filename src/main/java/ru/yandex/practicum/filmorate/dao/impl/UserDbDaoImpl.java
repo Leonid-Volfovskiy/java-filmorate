@@ -72,7 +72,7 @@ public class UserDbDaoImpl implements UserDao {
 
     @Override
     public User getUserById(int id) throws NotFoundException{
-        final String sqlQuery = "select * from USERS where user_id = ?";
+        final String sqlQuery = "select * from USERS where USER_ID = ?";
         final List<User> users = jdbcTemplate.query(sqlQuery, this::prepareUserFromBd, id);
         if (users.size() == 0) {
             log.debug(String.format("Пользователь %d не найден.", id));
@@ -84,24 +84,24 @@ public class UserDbDaoImpl implements UserDao {
     @Override
     public List<User> getFriends(int userId) {
         String qs = "SELECT u.* FROM FRIENDS fr " +
-                "JOIN users u on fr.friend_id = u.user_id " +
-                "WHERE fr.user_id = ?;";
+                "JOIN users u on fr.FRIEND_ID = u.USER_ID " +
+                "WHERE fr.USER_ID = ?;";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId);
     }
 
     @Override
     public List<User> getCommonFriends(int userId, int friendId) {
-        String qs = "SELECT u.* FROM friendships f " +
-                "JOIN users u ON f.friend_id = u.user_id " +
-                "WHERE f.user_id = ? OR f.user_id = ? " +
-                "GROUP BY f.friend_id " +
-                "HAVING COUNT(f.user_id) > 1;";
+        String qs = "SELECT u.* FROM FRIENDS f " +
+                "JOIN users u ON f.FRIEND_ID = u.USER_ID " +
+                "WHERE f.USER_ID = ? OR f.USER_ID = ? " +
+                "GROUP BY f.FRIEND_ID " +
+                "HAVING COUNT(f.USER_ID) > 1;";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId, friendId);
     }
 
     @Override
     public int deleteUser(int id) {
-        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+        String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?";
         return jdbcTemplate.update(sqlQuery, id);
     }
 }
