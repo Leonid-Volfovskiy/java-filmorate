@@ -12,5 +12,5 @@ public interface FilmDao {
     List<Film> findAllFilms();
     Film getFilmById(int id);
     List<Film> getPopularFilms(int count);
-
+    int deleteFilmById(int id);
 }

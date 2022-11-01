@@ -100,4 +100,10 @@ public class FilmDbDaoImpl implements FilmDao {
         List<Film> popFilm = jdbcTemplate.query(qs, this::prepareFilmFromBd, count);
         return popFilm;
     }
+
+    @Override
+    public int deleteFilmById(int id) {
+        final String qs = "DELETE FROM films WHERE film_id = ?";
+        return jdbcTemplate.update(qs, id);
+    }
 }

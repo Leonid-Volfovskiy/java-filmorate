@@ -34,21 +34,21 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidExceptions(final MethodArgumentNotValidException e) {
         log.warn("Ошибка валидации данных с помощью аннотаций.");
-        return new ErrorResponse("Ошибка валидации данных.");
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConstraintViolationExceptions(final ConstraintViolationException e) {
         log.warn("Ошибка валидации значений аргументов.");
-        return new ErrorResponse("Ошибка валидации данных.");
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAllOtherExceptions(final Throwable e) {
         log.warn("Неизвестная ошибка.");
-        return new ErrorResponse("Неизвестная ошибка.");
+        return new ErrorResponse(e.getMessage());
     }
 
 }

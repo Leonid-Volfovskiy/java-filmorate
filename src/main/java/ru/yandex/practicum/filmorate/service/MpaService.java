@@ -20,10 +20,12 @@ public class MpaService {
         if (id < 0 ) {
             throw new NotFoundException("Неверно передан ID MPA.");
         }
+        log.info("Получен рейтинг MPA с идентификатором " + id + ".");
         return mpaDao.getById(id);
     }
 
     public List<Mpa> getAll() {
+        log.info("Получен список всех рейтингов MPA.");
         return mpaDao.getAllMpas();
     }
 }

@@ -9,4 +9,5 @@ public class FilmGenres {
 
     private int genreId;
     private int filmId;
+
 }

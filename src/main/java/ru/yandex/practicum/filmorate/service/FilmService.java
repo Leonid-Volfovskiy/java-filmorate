@@ -30,6 +30,7 @@ public class FilmService {
             genresDao.filmGenreUpdate(newFilm.getId(), film.getGenres());
         }
         newFilm.setGenres(genresDao.getGenresByFilmId(newFilm.getId()));
+        log.info("Фильм сохранен: " + newFilm.getId() + " .");
         return newFilm;
     }
     public Film update (Film film) {
@@ -39,24 +40,30 @@ public class FilmService {
             genresDao.filmGenreUpdate(film.getId(), film.getGenres());
         }
         updatedFilm.setGenres(genresDao.getGenresByFilmId(film.getId()));
+        log.info("Данные фильма обновлены: " + updatedFilm.getId() + " .");
         return updatedFilm;
     }
 
     public List<Film> findAllFilms() {
         List<Film> list = filmDao.findAllFilms();
-        for (Film filmFromList: list) {
-            filmFromList.setGenres(genresDao.getGenresByFilmId(filmFromList.getId()));
-        }
+        log.info("Получен список всех фильмов.");
         return list;
     }
 
     public void deleteAllFilms () {
+        log.info("Все фильмы удалены.");
         filmDao.deleteAllFilms();
+    }
+
+    public int deleteFilmById(int id) {
+        log.info("Фильм удален.");
+        return filmDao.deleteFilmById(id);
     }
 
     public Film getFilmById (int filmId) {
         Film film = filmDao.getFilmById(filmId);
         film.setGenres(genresDao.getGenresByFilmId(film.getId()));
+        log.info("Получен фильм с идентификатором " + filmId + ".");
         return film;
     }
 
@@ -65,6 +72,7 @@ public class FilmService {
         User user = userDao.getUserById(userId);
         film.setRate(film.getRate() + 1);
         likesDao.saveLike(filmId, userId);
+        film.setRate(film.getRate() + 1);
         log.info("Пользователь " + user.getName() + " поставил лайк фильму " + film.getName());
         return film;
     }
@@ -74,6 +82,7 @@ public class FilmService {
         User user = userDao.getUserById(userId);
         film.setRate(film.getRate() - 1);
         likesDao.removeLike(filmId, userId);
+        film.setRate(film.getRate() + 1);
         log.info("Пользователь " + user.getName() + " удалил лайк у фильма " + film.getName());
         return film;
     }

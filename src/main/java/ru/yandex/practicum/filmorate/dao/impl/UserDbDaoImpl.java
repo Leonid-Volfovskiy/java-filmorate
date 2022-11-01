@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -95,9 +93,15 @@ public class UserDbDaoImpl implements UserDao {
     public List<User> getCommonFriends(int userId, int friendId) {
         String qs = "SELECT u.* FROM friendships f " +
                 "JOIN users u ON f.friend_id = u.user_id " +
-                "WHERE f.user_id = ? OR f.user_id = ?" +
+                "WHERE f.user_id = ? OR f.user_id = ? " +
                 "GROUP BY f.friend_id " +
                 "HAVING COUNT(f.user_id) > 1;";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId, friendId);
+    }
+
+    @Override
+    public int deleteUser(int id) {
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
+        return jdbcTemplate.update(sqlQuery, id);
     }
 }

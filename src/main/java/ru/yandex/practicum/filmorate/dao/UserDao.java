@@ -9,6 +9,7 @@ public interface UserDao {
     User createUser(User user);
     User updateUser(User user);
     void deleteAllUsers ();
+    int deleteUser(int id);
     List<User> findAllUsers();
     User getUserById(int id);
     List<User> getFriends(int userId);
