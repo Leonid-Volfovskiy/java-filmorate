@@ -1,10 +1,10 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.GenresStorage;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.GenresDao;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.PreparedStatement;
@@ -13,9 +13,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-@AllArgsConstructor
-public class GenresDbStorageImpl implements GenresStorage {
+@Repository
+@RequiredArgsConstructor
+public class GenresDbDaoImpl implements GenresDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -45,7 +45,7 @@ public class GenresDbStorageImpl implements GenresStorage {
                 new BatchPreparedStatementSetter() {
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         ps.setInt(1, filmId);
-                        ps.setInt(2, genresNoRepeat.get(i).getId());
+                        ps.setInt(2, genresNoRepeat.get(i).getGenreId());
                     }
                     public int getBatchSize() {
                         return genresNoRepeat.size();

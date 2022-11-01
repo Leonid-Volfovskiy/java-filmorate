@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Mpa {
-    private int id;
+    private int raitingId;
     @NotBlank
-    private String name;
+    private String mpaName;
 }

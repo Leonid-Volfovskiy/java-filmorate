@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
-public interface LikesStorage {
+public interface LikesDao {
 
     int saveLike(int filmId, int userId);
 

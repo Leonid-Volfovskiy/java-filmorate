@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.LikesStorage;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.LikesDao;
 
-@Component
-@AllArgsConstructor
-public class LikesDbStorageImpl implements LikesStorage {
+@Repository
+@RequiredArgsConstructor
+public class LikesDbDaoImpl implements LikesDao {
 
     private final JdbcTemplate jdbcTemplate;
 

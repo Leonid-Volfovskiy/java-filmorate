@@ -1,18 +1,18 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.MpaStorage;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Component
-@AllArgsConstructor
-public class MpaDbStorageImpl implements MpaStorage {
+@Repository
+@RequiredArgsConstructor
+public class MpaDbDaoImpl implements MpaDao {
 
     private final JdbcTemplate jdbcTemplate;
 

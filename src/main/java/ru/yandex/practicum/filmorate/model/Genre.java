@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Genre {
-    private int id;
+    private int genreId;
     @NotBlank
-    private String name;
+    private String genreName;
 }

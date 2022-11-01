@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.dao;
 
-public interface FriendsStorage {
+public interface FriendsDao {
 
     int saveFriend(int userId, int friendId);
 

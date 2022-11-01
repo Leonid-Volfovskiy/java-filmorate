@@ -27,7 +27,6 @@ public class Film {
     private int rate;
 
     private List<Genre> genres;
-    private Set<Integer> likes = new HashSet<>();
 
     public List<Genre> getGenres() {
         return genres;

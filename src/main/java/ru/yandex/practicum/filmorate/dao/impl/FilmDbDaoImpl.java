@@ -4,31 +4,31 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.MpaStorage;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.dao.FilmDao;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Repository
 @RequiredArgsConstructor
-public class FilmDbStorageImpl implements FilmStorage {
+public class FilmDbDaoImpl implements FilmDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MpaStorage mpaStorage;
+    private final MpaDao mpaDao;
 
-    public Film prepareFilmFromBd(ResultSet rs, int rowNum) throws SQLException {
+    private Film prepareFilmFromBd(ResultSet rs, int rowNum) throws SQLException {
         Film film = new Film(rs.getInt("FILM_ID"),
                 rs.getString("NAME"),
                 rs.getString("DESCRIPTION"),
                 rs.getDate("RELEASE_DATE").toLocalDate(),
                 rs.getInt("DURATION"),
-                mpaStorage.getById(rs.getInt("RAITING_ID")));
+                mpaDao.getById(rs.getInt("RAITING_ID")));
         film.setRate(rs.getInt("RATE"));
         return film;
     }
@@ -40,7 +40,7 @@ public class FilmDbStorageImpl implements FilmStorage {
         values.put("DESCRIPTION", film.getDescription());
         values.put("RELEASE_DATE", Date.valueOf(film.getReleaseDate()));
         values.put("DURATION", film.getDuration());
-        values.put("RAITING_ID", film.getMpa().getId());
+        values.put("RAITING_ID", film.getMpa().getRaitingId());
         values.put("RATE", film.getRate());
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("FILMS")
@@ -54,7 +54,7 @@ public class FilmDbStorageImpl implements FilmStorage {
         String qs = "UPDATE films SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
                 "DURATION = ?, RAITING_ID = ? WHERE FILM_ID = ?";
         int result = jdbcTemplate.update(qs, film.getName(), film.getDescription(), film.getReleaseDate(),
-                film.getDuration(), film.getMpa().getId(), film.getId());
+                film.getDuration(), film.getMpa().getRaitingId(), film.getId());
         if (result != 1) {
             throw new NotFoundException("Фильм не найден.");
         }
@@ -70,21 +70,34 @@ public class FilmDbStorageImpl implements FilmStorage {
 
     @Override
     public List<Film> findAllFilms() {
-        String qs = "SELECT * FROM FILMS AS f" /*+
-                "LEFT JOIN FILMS_GENRES AS fg ON fg.film_id = f.FILM_ID" +
-                "LEFT JOIN MPA AS m ON m.RAITING_ID = f.RAITING_ID" +
-                "LEFT JOIN likes AS l on l.FILM_ID = f.FILM_ID" +
-                "LEFT JOIN genres AS g ON g.genre_id = fg.genre_id"*/;
-        return jdbcTemplate.query(qs, this::prepareFilmFromBd);
+        String qs = "SELECT * FROM films AS f " +
+                "LEFT JOIN MPA m ON m.RAITING_ID = f.RAITING_ID;";
+        List<Film> allFilms = jdbcTemplate.query(qs, this::prepareFilmFromBd);
+        return allFilms;
     }
 
     @Override
     public Film getFilmById(int id) {
-        String qs = "SELECT * FROM FILMS WHERE FILM_ID = ?";
+        String qs = "SELECT * FROM films AS f " +
+                "LEFT JOIN MPA m ON m.RAITING_ID = f.RAITING_ID " +
+                "WHERE f.film_id = ?;";
         try {
             return jdbcTemplate.queryForObject(qs, this::prepareFilmFromBd, id);
         } catch (DataAccessException e) {
             throw new NotFoundException("Фильм не найден.");
         }
+    }
+
+    @Override
+    public List<Film> getPopularFilms(int count) {
+        final String qs = "SELECT * FROM films AS f " +
+                "LEFT JOIN MPA m ON m.RAITING_ID = f.RAITING_ID " +
+                "LEFT OUTER JOIN LIKES l on f.FILM_ID = l.FILM_ID " +
+                "GROUP BY f.FILM_ID " +
+                "ORDER BY COUNT(l.FILM_ID) " +
+                "DESC LIMIT ?;";
+
+        List<Film> popFilm = jdbcTemplate.query(qs, this::prepareFilmFromBd, count);
+        return popFilm;
     }
 }

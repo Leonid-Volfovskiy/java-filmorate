@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.dao.impl;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.FriendsStorage;
+import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
 
-@Component
-@AllArgsConstructor
-public class FriendsDbStorageImpl implements FriendsStorage {
+@Repository
+@RequiredArgsConstructor
+public class FriendsDbDaoImpl implements FriendsDao {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public int saveFriend(int userId, int friendId) {

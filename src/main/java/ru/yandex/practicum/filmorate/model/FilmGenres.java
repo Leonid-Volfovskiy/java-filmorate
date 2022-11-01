@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FilmGenres {
 
-    private int id;
+    private int genreId;
     private int filmId;
 }

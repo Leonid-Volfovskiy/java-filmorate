@@ -6,6 +6,9 @@ create table if not exists USERS (
     BIRTHDAY DATE not null
 );
 
+create unique index if not exists USER_EMAIL_UINDEX on USERS (email);
+create unique index if not exists USER_LOGIN_UINDEX on USERS (login);
+
 create table if not exists MPA (
     RAITING_ID INTEGER not null primary key unique,
     MPA CHARACTER VARYING(30) not null
