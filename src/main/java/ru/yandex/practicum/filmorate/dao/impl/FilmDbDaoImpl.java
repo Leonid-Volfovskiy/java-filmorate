@@ -34,7 +34,7 @@ public class FilmDbDaoImpl implements FilmDao {
                 rs.getString("description"),
                 rs.getInt("duration"),
                 rs.getInt("rate"),
-                new Mpa(rs.getInt("rate_id"), rs.getString("mpa_name")));
+                new Mpa(rs.getInt("id"), rs.getString("mpa_name")));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class FilmDbDaoImpl implements FilmDao {
         values.put("release_date", film.getReleaseDate());
         values.put("duration", film.getDuration());
         values.put("rate", film.getRate());
-        values.put("rate_id", film.getMpa().getRateId());
+        values.put("id", film.getMpa().getId());
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("films")
                 .usingGeneratedKeyColumns("film_id");
@@ -53,14 +53,12 @@ public class FilmDbDaoImpl implements FilmDao {
         return film;
     }
 
-    //Film(String name, LocalDate releaseDate, String description, int duration, int rate, Mpa mpa)
-
     @Override
     public Film updateFilm(Film film) {
         String qs = "UPDATE films SET name = ?, description = ?, release_date = ?, " +
-                "duration = ?, rate_id = ? WHERE film_id = ?";
+                "duration = ?, id = ? WHERE film_id = ?";
         int result = jdbcTemplate.update(qs, film.getName(), film.getDescription(), film.getReleaseDate(),
-                film.getDuration(), film.getMpa().getRateId(), film.getId());
+                film.getDuration(), film.getMpa().getId(), film.getId());
         if (result != 1) {
             throw new NotFoundException("Фильм не найден.");
         }
@@ -77,7 +75,7 @@ public class FilmDbDaoImpl implements FilmDao {
     @Override
     public List<Film> findAllFilms() {
         String qs = "SELECT * FROM films AS f " +
-                "LEFT JOIN mpa m ON m.rate_id = f.rate_id;";
+                "LEFT JOIN mpa m ON m.id = f.id;";
         List<Film> films = jdbcTemplate.query(qs, this::prepareFilmFromBd);
         addGenresToFilms(films);
         return films;
@@ -86,7 +84,7 @@ public class FilmDbDaoImpl implements FilmDao {
     @Override
     public Film getFilmById(int id) {
         String qs = "SELECT * FROM films AS f " +
-                "LEFT JOIN mpa m ON m.rate_id = f.rate_id " +
+                "LEFT JOIN mpa m ON m.id = f.id " +
                 "WHERE f.film_id = ?;";
         try {
             return jdbcTemplate.queryForObject(qs, this::prepareFilmFromBd, id);
@@ -98,7 +96,7 @@ public class FilmDbDaoImpl implements FilmDao {
     @Override
     public List<Film> getPopularFilms(int count) {
         final String qs = "SELECT * FROM films AS f " +
-                "LEFT JOIN mpa m ON m.rate_id = f.rate_id " +
+                "LEFT JOIN mpa m ON m.id = f.id " +
                 "LEFT OUTER JOIN likes l on f.film_id = l.film_id " +
                 "GROUP BY f.film_id " +
                 "ORDER BY COUNT(l.film_id) " +

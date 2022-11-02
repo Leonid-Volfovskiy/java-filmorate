@@ -18,7 +18,7 @@ public class MpaDbDaoImpl implements MpaDao {
 
     @Override
     public Mpa getById(int id) {
-        String qs = "SELECT * FROM mpa WHERE rate_id = ?";
+        String qs = "SELECT * FROM mpa WHERE id = ?";
         return jdbcTemplate.queryForObject(qs, this::prepareMpaFromBd, id);
     }
 
@@ -29,8 +29,8 @@ public class MpaDbDaoImpl implements MpaDao {
     }
 
     private Mpa prepareMpaFromBd(ResultSet rs, int rowNum) throws SQLException {
-        int mpaId = rs.getInt("rate_id");
+        int id = rs.getInt("id");
         String mpaName = rs.getString("mpa_name");
-        return new Mpa(mpaId, mpaName);
+        return new Mpa(id, mpaName);
     }
 }

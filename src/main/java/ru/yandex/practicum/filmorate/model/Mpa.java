@@ -9,6 +9,6 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 public class Mpa {
-    private int rateId;
+    private Integer id;
     private String mpaName;
 }

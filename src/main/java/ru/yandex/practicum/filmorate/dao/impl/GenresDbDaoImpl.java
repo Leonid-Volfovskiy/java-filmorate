@@ -33,7 +33,7 @@ public class GenresDbDaoImpl implements GenresDao {
     @Override
     public List<Genre> getGenresByFilmId(int filmId) {
         String qs = "SELECT * FROM genres g " +
-                "INNER JOIN films_genres fg on g.id = fg.id " +
+                "INNER JOIN film_genres fg on g.genre_id = fg.genre_id " +
                 "WHERE film_id = ?";
         return jdbcTemplate.query(qs, this::prepareGenreFromBd, filmId);
     }
