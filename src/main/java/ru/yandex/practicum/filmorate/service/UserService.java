@@ -3,72 +3,68 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FriendsDao;
+import ru.yandex.practicum.filmorate.dao.UserDao;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserDao userDao;
+    private final FriendsDao friendsDao;
+
     public User create (User user) {
-        return userStorage.create(user);
+        log.info("Пользователь создан: " + user.getId() + " .");
+        return userDao.createUser(user);
     }
     public User update (User user) {
-        return userStorage.update(user);
+        return userDao.updateUser(user);
     }
     public void deleteAllUsers () {
-        userStorage.deleteAllUsers();
+        log.info("Все пользователи удалены.");
+        userDao.deleteAllUsers();
     }
+
+    public int deleteUser(int id) {
+        log.info("Пользователь удален: " + id + " .");
+        return userDao.deleteUser(id);
+    }
+
     public List<User> findAll() {
-        return new ArrayList<>(userStorage.findAll());
+        log.info("Получен список всех пользователей.");
+        return userDao.findAllUsers();
     }
-    public User getUserById(int id) {
-        return userStorage.getUserById(id);
-    }
-
-    public User addFriend (int id, int friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(id);
-        log.info("Пользователь " + user.getName() + " добавлен в список друзей "
-                + friend.getName());
-        return user;
+    public User getUserById(int userId) {
+        log.info("Получен пользователь с идентификатором " + userId + ".");
+        return userDao.getUserById(userId);
     }
 
-    public User deleteFriend (int id, int friendId) {
-        User user = userStorage.getUserById(id);
-        User friend = userStorage.getUserById(friendId);
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(id);
-        log.info("Пользователь " + user.getName() + " удален из списка друзей "
-                + friend.getName());
-        return user;
+    public void addFriend (int userId, int friendId) {
+        if (userId < 0 || friendId < 0) {
+            throw new NotFoundException("Пользователь не может быть добавлен.");
+        }
+        log.info("Пользователь " + userId + " добавил в друзья пользователя " + friendId + ".");
+        friendsDao.saveFriend(userId, friendId);
     }
 
-    public List<User> getListOfFriendsByID(int id) {
-        User user = userStorage.getUserById(id);
-        log.info("Список друзей пользователя " + user.getName());
-        return user.getFriends()
-                .stream()
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
+    public void deleteFriend (int userId, int friendId) {
+        log.info("Пользователь " + userId + " удалил из друзей пользователя " + friendId + ".");
+        friendsDao.deleteFriend(userId, friendId);
     }
 
-    public List<User> listOfCommonFriends (int id, int otherId) {
-        User user = getUserById(id);
-        User friend = getUserById(otherId);
-        log.info("Список общих друзей пользователей");
-        return user.getFriends()
-                .stream()
-                .filter(f -> friend.getFriends().contains(f))
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
+    public List<User> getListOfFriendsByID(int userId) {
+        log.info("Получен список друзей пользователя " + userId + ".");
+        return userDao.getFriends(userId);
+    }
+
+
+    public List<User> listOfCommonFriends (int userId, int friendId) {
+        log.info("Получен список общих друзей пользователя " + userId + " и пользователя " + friendId + ".");
+        return userDao.getCommonFriends(userId, friendId);
     }
 
 }
