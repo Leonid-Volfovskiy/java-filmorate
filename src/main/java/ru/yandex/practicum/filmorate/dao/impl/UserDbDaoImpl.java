@@ -82,19 +82,18 @@ public class UserDbDaoImpl implements UserDao {
 
     @Override
     public List<User> getFriends(int userId) {
-        String qs = "SELECT u.* FROM friends fr " +
-                "JOIN users u on fr.friend_id = u.user_id " +
-                "WHERE fr.user_id = ?;";
+        String qs = "SELECT * FROM USERS, FRIENDS " +
+                "WHERE USERS.USER_ID = FRIENDS.FRIEND_ID " +
+                "AND FRIENDS.USER_ID = ?";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId);
     }
 
     @Override
     public List<User> getCommonFriends(int userId, int friendId) {
-        String qs = "SELECT u.* FROM friends f " +
-                "JOIN users u ON f.friend_id = u.user_id " +
-                "WHERE f.user_id = ? OR f.user_id = ? " +
-                "GROUP BY f.friend_id " +
-                "HAVING COUNT(f.user_id) > 1;";
+        String qs = "SELECT * FROM USERS u, FRIENDS f, " +
+                "FRIENDS o WHERE u.USER_ID = f.FRIEND_ID " +
+                "AND u.USER_ID = o.FRIEND_ID " +
+                "AND f.USER_ID = ? AND o.USER_ID = ?";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId, friendId);
     }
 

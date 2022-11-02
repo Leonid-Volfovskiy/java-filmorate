@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.dao.GenresDao;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -64,13 +62,7 @@ public class FilmService {
     public List<Film> getPopularFilms(int countFilms) {
         List<Film> films = filmDao.getPopularFilms(countFilms);
         log.info("Список из " + countFilms + " самых популярных фильмов.");
-        return films.stream()
-                .sorted(this::compare)
-                .limit(countFilms)
-                .collect(Collectors.toList());
+        return films;
     }
 
-    private int compare(Film f0, Film f1) {
-        return f1.getRate() - f0.getRate();
-    }
 }

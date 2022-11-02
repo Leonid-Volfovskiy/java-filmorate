@@ -25,8 +25,7 @@ import static ru.yandex.practicum.filmorate.dao.impl.GenresDbDaoImpl.createGenre
 public class FilmDbDaoImpl implements FilmDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final MpaDao mpaDao;
-
+    
     private Film prepareFilmFromBd(ResultSet rs, int rowNum) throws SQLException {
         return new Film(rs.getInt("film_id"),
                 rs.getString("name"),
