@@ -5,7 +5,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
@@ -118,7 +117,7 @@ public class FilmDbDaoImpl implements FilmDao {
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
         final Map<Integer, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
-        final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.id" +
+        final String sqlQuery = "SELECT * FROM genres g, films_genres fg WHERE fg.id" +
                 " = g.id AND fg.film_id IN (" + filmIds + ")";
         jdbcTemplate.query(sqlQuery, (rs) -> {
             final Film film = filmById.get(rs.getInt("film_id"));

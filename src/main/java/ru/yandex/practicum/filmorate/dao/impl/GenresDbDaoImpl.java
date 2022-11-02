@@ -33,7 +33,7 @@ public class GenresDbDaoImpl implements GenresDao {
     @Override
     public List<Genre> getGenresByFilmId(int filmId) {
         String qs = "SELECT * FROM genres g " +
-                "INNER JOIN film_genres fg on g.id = fg.id " +
+                "INNER JOIN films_genres fg on g.id = fg.id " +
                 "WHERE film_id = ?";
         return jdbcTemplate.query(qs, this::prepareGenreFromBd, filmId);
     }
@@ -41,7 +41,7 @@ public class GenresDbDaoImpl implements GenresDao {
     public void filmGenreUpdate(Integer filmId, List<Genre> genreList) {
         List<Genre> genresNoRepeat = genreList.stream().distinct().collect(Collectors.toList());
         jdbcTemplate.batchUpdate(
-                "INSERT INTO film_genres (film_id, id) VALUES (?, ?)",
+                "INSERT INTO films_genres (film_id, id) VALUES (?, ?)",
                 new BatchPreparedStatementSetter() {
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         ps.setInt(1, filmId);
@@ -55,7 +55,7 @@ public class GenresDbDaoImpl implements GenresDao {
 
     @Override
     public void deleteGenresByFilmId(int filmId) {
-        jdbcTemplate.update("DELETE FROM film_genres WHERE film_id = ?", filmId);
+        jdbcTemplate.update("DELETE FROM films_genres WHERE film_id = ?", filmId);
     }
 
     private Genre prepareGenreFromBd(ResultSet rs, int rowNum) throws SQLException {

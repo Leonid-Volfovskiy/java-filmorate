@@ -90,6 +90,8 @@ class FilmDaoTest {
 
         filmDao.createFilm(testFilm2);
         assertEquals(2, filmDao.findAllFilms().size());
+
+        System.out.println(filmDao.findAllFilms());
     }
 
     @Test

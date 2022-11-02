@@ -27,7 +27,7 @@ create table if not exists films (
     release_date DATE not null,
     duration INTEGER not null,
     id INTEGER REFERENCES mpa (id) ON DELETE SET NULL,
-    rate INTEGER
+    rate INTEGER not null
 );
 
 create table if not exists friends (
@@ -36,9 +36,9 @@ create table if not exists friends (
     PRIMARY KEY (user_id, friend_id)
 );
 
-create table if not exists film_genres (
-    id INTEGER REFERENCES genres (id) ON DELETE CASCADE,
+create table if not exists films_genres (
     film_id INTEGER REFERENCES films (film_id) ON DELETE CASCADE,
+    id INTEGER REFERENCES genres (id) ON DELETE CASCADE,
     PRIMARY KEY (film_id, id)
 );
 
