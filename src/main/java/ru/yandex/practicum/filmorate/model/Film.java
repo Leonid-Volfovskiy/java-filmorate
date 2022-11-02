@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,10 +30,7 @@ public class Film {
     @NotNull
     private Mpa mpa;
     private int rate;
-    private List<Genre> genres;
-    public List<Genre> getGenres() {
-        return genres;
-    }
+    private List<Genre> genres = new ArrayList<>();
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
@@ -60,12 +58,11 @@ public class Film {
         this.rate = rate;
         this.mpa = mpa;
     }
-
-    public void setGenres(List<Genre> genres) {
-        this.genres = genres;
-    }
     public void addGenreToFilm(Genre genre) {
         genres.add(genre);
+    }
+    public List<Genre> getGenres() {
+        return genres;
     }
 }
 
