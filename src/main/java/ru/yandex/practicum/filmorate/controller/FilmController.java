@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.LikeService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -21,6 +22,7 @@ import static ru.yandex.practicum.filmorate.Constants.OLD_RELEASE_DATE;
 @Slf4j
 public class FilmController {
     private final FilmService filmService;
+    private final LikeService likeService;
 
     protected void deleteAllFilms() {
         filmService.deleteAllFilms();
@@ -48,8 +50,8 @@ public class FilmController {
         return filmService.getFilmById(filmId);
     }
 
-    @DeleteMapping
-    public int deleteFilmById(@RequestBody int filmId) {
+    @DeleteMapping("/{filmId}")
+    public int deleteFilmById(@PathVariable("filmId") int filmId) {
         return filmService.deleteFilmById(filmId);
     }
 
@@ -57,13 +59,13 @@ public class FilmController {
     //PUT /films/{id}/like/{userId}
     @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        return filmService.addLike(id, userId);
+        return likeService.addLike(id, userId);
     }
 
     //DELETE /films/{id}/like/{userId}
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        return filmService.deleteLike(id, userId);
+        return likeService.deleteLike(id, userId);
     }
 
     //GET /films/popular?count={count}

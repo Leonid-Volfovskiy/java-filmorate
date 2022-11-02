@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,7 +36,7 @@ public class UserService {
 
     public List<User> findAll() {
         log.info("Получен список всех пользователей.");
-        return new ArrayList<>(userDao.findAllUsers());
+        return userDao.findAllUsers();
     }
     public User getUserById(int userId) {
         log.info("Получен пользователь с идентификатором " + userId + ".");

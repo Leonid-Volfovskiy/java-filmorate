@@ -5,11 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.dao.GenresDao;
-import ru.yandex.practicum.filmorate.dao.LikesDao;
-import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,9 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
     private final FilmDao filmDao;
-    private final UserDao userDao;
     private final GenresDao genresDao;
-    private final LikesDao likesDao;
 
     public Film create (Film film) {
         Film newFilm = filmDao.createFilm(film);
@@ -64,26 +58,6 @@ public class FilmService {
         Film film = filmDao.getFilmById(filmId);
         film.setGenres(genresDao.getGenresByFilmId(film.getId()));
         log.info("Получен фильм с идентификатором " + filmId + ".");
-        return film;
-    }
-
-    public Film addLike (int filmId, int userId) {
-        Film film = filmDao.getFilmById(filmId);
-        User user = userDao.getUserById(userId);
-        film.setRate(film.getRate() + 1);
-        likesDao.saveLike(filmId, userId);
-        film.setRate(film.getRate() + 1);
-        log.info("Пользователь " + user.getName() + " поставил лайк фильму " + film.getName());
-        return film;
-    }
-
-    public Film deleteLike (int filmId, int userId) {
-        Film film = filmDao.getFilmById(filmId);
-        User user = userDao.getUserById(userId);
-        film.setRate(film.getRate() - 1);
-        likesDao.removeLike(filmId, userId);
-        film.setRate(film.getRate() + 1);
-        log.info("Пользователь " + user.getName() + " удалил лайк у фильма " + film.getName());
         return film;
     }
 

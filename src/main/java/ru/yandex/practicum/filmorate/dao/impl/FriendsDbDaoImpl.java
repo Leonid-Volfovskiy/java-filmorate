@@ -11,13 +11,13 @@ public class FriendsDbDaoImpl implements FriendsDao {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public int saveFriend(int userId, int friendId) {
-        String qs = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID) VALUES (?, ?)";
+        String qs = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
         return jdbcTemplate.update(qs, userId, friendId);
     }
 
     @Override
     public int deleteFriend(int userId, int friendId) {
-        String qs = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        String qs = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
         return jdbcTemplate.update(qs, userId, friendId);
     }
 

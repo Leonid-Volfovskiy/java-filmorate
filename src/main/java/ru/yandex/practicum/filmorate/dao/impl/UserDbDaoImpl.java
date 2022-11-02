@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.User;
 
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.*;
 
 @Repository
@@ -45,7 +44,7 @@ public class UserDbDaoImpl implements UserDao {
 
     @Override
     public User updateUser(User user) throws NotFoundException {
-        final String qs = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, NAME = ?, BIRTHDAY = ? WHERE USER_ID = ?";
+        final String qs = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ? WHERE user_id = ?";
         int result = jdbcTemplate.update(qs, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(),
                 user.getId());
         if (result != 1) {
@@ -56,13 +55,13 @@ public class UserDbDaoImpl implements UserDao {
 
     @Override
     public void deleteAllUsers() {
-        String sqlQuery = "delete from USERS";
+        String sqlQuery = "delete from users";
         jdbcTemplate.update(sqlQuery);
     }
 
     @Override
     public List<User> findAllUsers() {
-        final String sqlQuery = "select * from USERS";
+        final String sqlQuery = "select * from users";
         final List<User> users = jdbcTemplate.query(sqlQuery, this::prepareUserFromBd);
         if (users.size() == 0) {
             return Collections.emptyList();
@@ -72,7 +71,7 @@ public class UserDbDaoImpl implements UserDao {
 
     @Override
     public User getUserById(int id) throws NotFoundException{
-        final String sqlQuery = "select * from USERS where USER_ID = ?";
+        final String sqlQuery = "select * from users where user_id = ?";
         final List<User> users = jdbcTemplate.query(sqlQuery, this::prepareUserFromBd, id);
         if (users.size() == 0) {
             log.debug(String.format("Пользователь %d не найден.", id));
@@ -83,25 +82,25 @@ public class UserDbDaoImpl implements UserDao {
 
     @Override
     public List<User> getFriends(int userId) {
-        String qs = "SELECT u.* FROM FRIENDS fr " +
-                "JOIN users u on fr.FRIEND_ID = u.USER_ID " +
-                "WHERE fr.USER_ID = ?;";
+        String qs = "SELECT u.* FROM friends fr " +
+                "JOIN users u on fr.friend_id = u.user_id " +
+                "WHERE fr.user_id = ?;";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId);
     }
 
     @Override
     public List<User> getCommonFriends(int userId, int friendId) {
-        String qs = "SELECT u.* FROM FRIENDS f " +
-                "JOIN users u ON f.FRIEND_ID = u.USER_ID " +
-                "WHERE f.USER_ID = ? OR f.USER_ID = ? " +
-                "GROUP BY f.FRIEND_ID " +
-                "HAVING COUNT(f.USER_ID) > 1;";
+        String qs = "SELECT u.* FROM friends f " +
+                "JOIN users u ON f.friend_id = u.user_id " +
+                "WHERE f.user_id = ? OR f.user_id = ? " +
+                "GROUP BY f.friend_id " +
+                "HAVING COUNT(f.user_id) > 1;";
         return jdbcTemplate.query(qs, this::prepareUserFromBd, userId, friendId);
     }
 
     @Override
     public int deleteUser(int id) {
-        String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?";
+        String sqlQuery = "DELETE FROM users WHERE user_id = ?";
         return jdbcTemplate.update(sqlQuery, id);
     }
 }

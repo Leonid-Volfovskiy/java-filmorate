@@ -9,11 +9,16 @@ import ru.yandex.practicum.filmorate.dao.MpaDao;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.util.function.UnaryOperator.identity;
+import static ru.yandex.practicum.filmorate.dao.impl.GenresDbDaoImpl.createGenreByRs;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,38 +28,39 @@ public class FilmDbDaoImpl implements FilmDao {
     private final MpaDao mpaDao;
 
     private Film prepareFilmFromBd(ResultSet rs, int rowNum) throws SQLException {
-        Film film = new Film(rs.getInt("FILM_ID"),
-                rs.getString("NAME"),
-                rs.getString("DESCRIPTION"),
-                rs.getDate("RELEASE_DATE").toLocalDate(),
-                rs.getInt("DURATION"),
-                mpaDao.getById(rs.getInt("RAITING_ID")));
-        film.setRate(rs.getInt("RATE"));
-        return film;
+        return new Film(rs.getInt("film_id"),
+                rs.getString("name"),
+                rs.getDate("release_date").toLocalDate(),
+                rs.getString("description"),
+                rs.getInt("duration"),
+                rs.getInt("rate"),
+                new Mpa(rs.getInt("rate_id"), rs.getString("mpa_name")));
     }
 
     @Override
     public Film createFilm(Film film) {
         Map<String, Object> values = new HashMap<>();
-        values.put("NAME", film.getName());
-        values.put("DESCRIPTION", film.getDescription());
-        values.put("RELEASE_DATE", Date.valueOf(film.getReleaseDate()));
-        values.put("DURATION", film.getDuration());
-        values.put("RAITING_ID", film.getMpa().getRaitingId());
-        values.put("RATE", film.getRate());
+        values.put("name", film.getName());
+        values.put("description", film.getDescription());
+        values.put("release_date", film.getReleaseDate());
+        values.put("duration", film.getDuration());
+        values.put("rate", film.getRate());
+        values.put("rate_id", film.getMpa().getRateId());
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("FILMS")
-                .usingGeneratedKeyColumns("FILM_ID");
+                .withTableName("films")
+                .usingGeneratedKeyColumns("film_id");
         film.setId(simpleJdbcInsert.executeAndReturnKey(values).intValue());
         return film;
     }
 
+    //Film(String name, LocalDate releaseDate, String description, int duration, int rate, Mpa mpa)
+
     @Override
     public Film updateFilm(Film film) {
-        String qs = "UPDATE films SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, " +
-                "DURATION = ?, RAITING_ID = ? WHERE FILM_ID = ?";
+        String qs = "UPDATE films SET name = ?, description = ?, release_date = ?, " +
+                "duration = ?, rate_id = ? WHERE film_id = ?";
         int result = jdbcTemplate.update(qs, film.getName(), film.getDescription(), film.getReleaseDate(),
-                film.getDuration(), film.getMpa().getRaitingId(), film.getId());
+                film.getDuration(), film.getMpa().getRateId(), film.getId());
         if (result != 1) {
             throw new NotFoundException("Фильм не найден.");
         }
@@ -64,22 +70,23 @@ public class FilmDbDaoImpl implements FilmDao {
 
     @Override
     public void deleteAllFilms() {
-        String sqlQuery = "delete from FILMS";
+        String sqlQuery = "delete from films";
         jdbcTemplate.update(sqlQuery);
     }
 
     @Override
     public List<Film> findAllFilms() {
         String qs = "SELECT * FROM films AS f " +
-                "LEFT JOIN MPA m ON m.RAITING_ID = f.RAITING_ID;";
-        List<Film> allFilms = jdbcTemplate.query(qs, this::prepareFilmFromBd);
-        return allFilms;
+                "LEFT JOIN mpa m ON m.rate_id = f.rate_id;";
+        List<Film> films = jdbcTemplate.query(qs, this::prepareFilmFromBd);
+        addGenresToFilms(films);
+        return films;
     }
 
     @Override
     public Film getFilmById(int id) {
         String qs = "SELECT * FROM films AS f " +
-                "LEFT JOIN MPA m ON m.RAITING_ID = f.RAITING_ID " +
+                "LEFT JOIN mpa m ON m.rate_id = f.rate_id " +
                 "WHERE f.film_id = ?;";
         try {
             return jdbcTemplate.queryForObject(qs, this::prepareFilmFromBd, id);
@@ -91,19 +98,34 @@ public class FilmDbDaoImpl implements FilmDao {
     @Override
     public List<Film> getPopularFilms(int count) {
         final String qs = "SELECT * FROM films AS f " +
-                "LEFT JOIN MPA m ON m.RAITING_ID = f.RAITING_ID " +
-                "LEFT OUTER JOIN LIKES l on f.FILM_ID = l.FILM_ID " +
-                "GROUP BY f.FILM_ID " +
-                "ORDER BY COUNT(l.FILM_ID) " +
+                "LEFT JOIN mpa m ON m.rate_id = f.rate_id " +
+                "LEFT OUTER JOIN likes l on f.film_id = l.film_id " +
+                "GROUP BY f.film_id " +
+                "ORDER BY COUNT(l.film_id) " +
                 "DESC LIMIT ?;";
 
-        List<Film> popFilm = jdbcTemplate.query(qs, this::prepareFilmFromBd, count);
-        return popFilm;
+        List<Film> films = jdbcTemplate.query(qs, this::prepareFilmFromBd, count);
+        addGenresToFilms(films);
+        return films;
     }
 
     @Override
     public int deleteFilmById(int id) {
         final String qs = "DELETE FROM films WHERE film_id = ?";
         return jdbcTemplate.update(qs, id);
+    }
+
+    private void addGenresToFilms(List<Film> films) {
+        String filmIds = films.stream()
+                .map(Film::getId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        final Map<Integer, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
+        final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.genre_id" +
+                " = g.genre_id AND fg.film_id IN (" + filmIds + ")";
+        jdbcTemplate.query(sqlQuery, (rs) -> {
+            final Film film = filmById.get(rs.getInt("film_id"));
+            film.addGenreToFilm(createGenreByRs(rs));
+        });
     }
 }

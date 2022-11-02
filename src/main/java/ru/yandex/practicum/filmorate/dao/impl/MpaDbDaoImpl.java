@@ -18,19 +18,19 @@ public class MpaDbDaoImpl implements MpaDao {
 
     @Override
     public Mpa getById(int id) {
-        String qs = "SELECT * FROM MPA WHERE RAITING_ID = ?";
+        String qs = "SELECT * FROM mpa WHERE rate_id = ?";
         return jdbcTemplate.queryForObject(qs, this::prepareMpaFromBd, id);
     }
 
     @Override
     public List<Mpa> getAllMpas() {
-        String qs = "SELECT * FROM MPA";
+        String qs = "SELECT * FROM mpa";
         return jdbcTemplate.query(qs, this::prepareMpaFromBd);
     }
 
     private Mpa prepareMpaFromBd(ResultSet rs, int rowNum) throws SQLException {
-        int mpaId = rs.getInt("RAITING_ID");
-        String mpaName = rs.getString("MPA");
+        int mpaId = rs.getInt("rate_id");
+        String mpaName = rs.getString("mpa_name");
         return new Mpa(mpaId, mpaName);
     }
 }
