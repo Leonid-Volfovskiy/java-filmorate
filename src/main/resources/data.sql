@@ -6,8 +6,8 @@ MERGE INTO mpa (ID, MPA_NAME)
            (4, 'R'),
            (5, 'NC-17');
 
-MERGE INTO genres (GENRE_ID, GENRE_NAME)
-    KEY(GENRE_ID)
+MERGE INTO genres (ID, GENRE_NAME)
+    KEY(ID)
     VALUES (1, 'Комедия'),
            (2, 'Драма'),
            (3, 'Мультфильм'),

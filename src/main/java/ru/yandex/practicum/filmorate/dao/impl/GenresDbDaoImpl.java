@@ -20,7 +20,7 @@ public class GenresDbDaoImpl implements GenresDao {
 
     @Override
     public Genre getById(int id) {
-        String qs = "SELECT * FROM genres WHERE genre_id = ?";
+        String qs = "SELECT * FROM genres WHERE id = ?";
         return jdbcTemplate.queryForObject(qs, this::prepareGenreFromBd, id);
     }
 
@@ -33,7 +33,7 @@ public class GenresDbDaoImpl implements GenresDao {
     @Override
     public List<Genre> getGenresByFilmId(int filmId) {
         String qs = "SELECT * FROM genres g " +
-                "INNER JOIN film_genres fg on g.genre_id = fg.genre_id " +
+                "INNER JOIN film_genres fg on g.id = fg.id " +
                 "WHERE film_id = ?";
         return jdbcTemplate.query(qs, this::prepareGenreFromBd, filmId);
     }
@@ -41,11 +41,11 @@ public class GenresDbDaoImpl implements GenresDao {
     public void filmGenreUpdate(Integer filmId, List<Genre> genreList) {
         List<Genre> genresNoRepeat = genreList.stream().distinct().collect(Collectors.toList());
         jdbcTemplate.batchUpdate(
-                "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)",
+                "INSERT INTO film_genres (film_id, id) VALUES (?, ?)",
                 new BatchPreparedStatementSetter() {
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
                         ps.setInt(1, filmId);
-                        ps.setInt(2, genresNoRepeat.get(i).getGenreId());
+                        ps.setInt(2, genresNoRepeat.get(i).getId());
                     }
                     public int getBatchSize() {
                         return genresNoRepeat.size();
@@ -59,15 +59,15 @@ public class GenresDbDaoImpl implements GenresDao {
     }
 
     private Genre prepareGenreFromBd(ResultSet rs, int rowNum) throws SQLException {
-        int genreId = rs.getInt("genre_id");
+        int id = rs.getInt("id");
         String genreName = rs.getString("genre_name");
-        return new Genre(genreId, genreName);
+        return new Genre(id, genreName);
     }
 
     public static Genre createGenreByRs(ResultSet rs) throws SQLException {
         return Genre.builder()
-                .genreId(rs.getInt("genre_id"))
-                .genreName(rs.getString("genre_name"))
+                .id(rs.getInt("id"))
+                .name(rs.getString("genre_name"))
                 .build();
     }
 }

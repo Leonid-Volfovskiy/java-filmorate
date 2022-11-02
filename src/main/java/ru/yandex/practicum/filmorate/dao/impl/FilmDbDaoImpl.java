@@ -119,8 +119,8 @@ public class FilmDbDaoImpl implements FilmDao {
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
         final Map<Integer, Film> filmById = films.stream().collect(Collectors.toMap(Film::getId, identity()));
-        final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.genre_id" +
-                " = g.genre_id AND fg.film_id IN (" + filmIds + ")";
+        final String sqlQuery = "SELECT * FROM genres g, film_genres fg WHERE fg.id" +
+                " = g.id AND fg.film_id IN (" + filmIds + ")";
         jdbcTemplate.query(sqlQuery, (rs) -> {
             final Film film = filmById.get(rs.getInt("film_id"));
             film.addGenreToFilm(createGenreByRs(rs));

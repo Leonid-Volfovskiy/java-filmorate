@@ -36,7 +36,7 @@ class FilmDaoTest {
 
         filmDao.createFilm(testFilm);
 
-        assertEquals("R", testFilm.getMpa().getMpaName());
+        assertEquals("R", testFilm.getMpa().getName());
         assertEquals(1, testFilm.getId());
         assertEquals(1, filmDao.findAllFilms().size());
 
@@ -63,7 +63,7 @@ class FilmDaoTest {
                 , 4,
                 new Mpa(1, "NC-17"));
         filmDao.updateFilm(updatedFilm);
-        assertEquals("NC-17", updatedFilm.getMpa().getMpaName());
+        assertEquals("NC-17", updatedFilm.getMpa().getName());
         assertEquals(1, updatedFilm.getId());
         assertEquals(1, filmDao.findAllFilms().size());
 

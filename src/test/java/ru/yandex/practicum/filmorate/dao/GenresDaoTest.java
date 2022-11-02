@@ -17,8 +17,8 @@ class GenresDaoTest {
 
     @Test
     void getById() {
-        assertEquals("Комедия", genresDao.getById(1).getGenreName());
-        assertEquals("Боевик", genresDao.getById(6).getGenreName());
+        assertEquals("Комедия", genresDao.getById(1).getName());
+        assertEquals("Боевик", genresDao.getById(6).getName());
     }
 
     @Test

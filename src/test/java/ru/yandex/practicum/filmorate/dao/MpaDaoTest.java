@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,8 +17,8 @@ class MpaDaoTest {
 
     @Test
     void getById() {
-        assertEquals("G", mpaDao.getById(1).getMpaName());
-        assertEquals("NC-17", mpaDao.getById(5).getMpaName());
+        assertEquals("G", mpaDao.getById(1).getName());
+        assertEquals("NC-17", mpaDao.getById(5).getName());
     }
 
     @Test

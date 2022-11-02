@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FilmGenres {
 
-    private int genreId;
+    private int id;
     private int filmId;
 
 }

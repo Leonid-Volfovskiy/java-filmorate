@@ -8,9 +8,6 @@ create table if not exists users (
     birthday DATE not null
 );
 
-create unique index if not exists user_email_uindex on users (email);
-create unique index if not exists user_login_uindex on users (login);
-
 create table if not exists mpa (
     id INTEGER not null,
     mpa_name CHARACTER VARYING(30) not null,
@@ -18,9 +15,9 @@ create table if not exists mpa (
 );
 
 create table if not exists genres (
-    genre_id INTEGER UNIQUE NOT NULL,
+    id INTEGER UNIQUE NOT NULL,
     genre_name VARCHAR(60) NOT NULL,
-    PRIMARY KEY (genre_id)
+    PRIMARY KEY (id)
 );
 
 create table if not exists films (
@@ -40,9 +37,9 @@ create table if not exists friends (
 );
 
 create table if not exists film_genres (
-    film_id INTEGER REFERENCES films (film_id) ON DELETE SET NULL,
-    genre_id INTEGER REFERENCES genres (genre_id) ON DELETE CASCADE,
-    PRIMARY KEY (film_id, genre_id)
+    id INTEGER REFERENCES genres (id) ON DELETE CASCADE,
+    film_id INTEGER REFERENCES films (film_id) ON DELETE CASCADE,
+    PRIMARY KEY (film_id, id)
 );
 
 create table if not exists likes (
